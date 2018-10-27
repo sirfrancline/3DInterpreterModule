@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BusinessLayer;
+using BusinessLayer.Interface;
+using System;
 
 namespace _3DInterpreter
 {
@@ -12,35 +14,42 @@ namespace _3DInterpreter
             int step = 0;
             double minMm = 20;
             double mmps = timeInMs * minMm;
-            int NumStepPerMs = CalculateMinStepPerMs(mmps, timeInMs, minMm);
+            
 
-            DisplayNumberOfSteps(min, timeInMs, NumStepPerMs);
+           
+
+            IMovement movement = new Movement();
+
+            int NumStepPerMs = movement.CalculateMinStepPerMs(mmps, timeInMs, minMm);
+            movement.DisplayNumberOfSteps(min, timeInMs, NumStepPerMs);
+
+
         }
 
-        public static int CalculateMinStepPerMs(double mmps, double timeInMs, double minMpS)
+        //public static int CalculateMinStepPerMs(double mmps, double timeInMs, double minMpS)
 
-        {
-            double distance = timeInMs * mmps;
+        //{
+        //    double distance = timeInMs * mmps;
 
-            int results = Convert.ToInt32(distance * minMpS);
+        //    int results = Convert.ToInt32(distance * minMpS);
 
-            Console.WriteLine("the result is :  " + results);
-            return results;
-        }
+        //    Console.WriteLine("the result is :  " + results);
+        //    return results;
+        //}
 
-        public static void DisplayNumberOfSteps(double min, double timeInMs, double NumStepPerMms)
-        {
-            int total =0;
+        //public static void DisplayNumberOfSteps(double min, double timeInMs, double NumStepPerMms)
+        //{
+        //    int total =0;
 
-            for (double i = 0; i < min; i += 0.1)
-            {
-                int step = Convert.ToInt32(NumStepPerMms * (i * 10));
+        //    for (double i = 0; i < min; i += 0.1)
+        //    {
+        //        int step = Convert.ToInt32(NumStepPerMms * (i * 10));
 
-                total += step;
+        //        total += step;
 
-                Console.WriteLine("time  is :  " + i  + "  Step per mms :   " + step + "    Total steps per second " + total);
-            }
-        }
+        //        Console.WriteLine("time  is :  " + i  + "  Step per mms :   " + step + "    Total steps per second " + total);
+        //    }
+        //}
 
         // multiply time with speed will give u travel distance
     }

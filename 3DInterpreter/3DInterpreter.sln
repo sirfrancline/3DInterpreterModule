@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DInterpreter", "3DInterpreter\3DInterpreter.csproj", "{EEFB2EDC-0EFD-4FA2-BCB4-6EEBD20358D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{1607D806-80B4-4B06-AD4D-9A057477AAD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EEFB2EDC-0EFD-4FA2-BCB4-6EEBD20358D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEFB2EDC-0EFD-4FA2-BCB4-6EEBD20358D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEFB2EDC-0EFD-4FA2-BCB4-6EEBD20358D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1607D806-80B4-4B06-AD4D-9A057477AAD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1607D806-80B4-4B06-AD4D-9A057477AAD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1607D806-80B4-4B06-AD4D-9A057477AAD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1607D806-80B4-4B06-AD4D-9A057477AAD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
