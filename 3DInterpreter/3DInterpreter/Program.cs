@@ -13,7 +13,8 @@ namespace _3DInterpreter
         {
             Console.WriteLine("Hello World!");
             var c = new MovementCalculator (new Configuration());
-            var steps = c.CalculateX(432);
+            var steps = c.CalculateX(11857
+);
             Console.WriteLine("fi nished");
             Console.ReadLine();
         }

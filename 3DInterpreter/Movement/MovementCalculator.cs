@@ -16,10 +16,10 @@ namespace Movement
             _printerConfiguration = printerConfiguration;
         }
 
-        public Movement CalculateX(int numbOfSteps)
+        public Movement CalculateX(int numb)
         {
             // calculate distance
-            
+            int numbOfSteps = numb;
             double[] travelmmList = new double[ numbOfSteps];
             double[] time = new double[numbOfSteps];
 
@@ -30,11 +30,11 @@ namespace Movement
             // double XstepsPerMM = 200.0000;
             //  double XMaxAcceleration = 40.000;
 
-            for (int i = 1; i <= numbOfSteps; i++)
+            for (int i = 1; i < numbOfSteps; i++)
             {
-                numbOfSteps = i;
+             int    numbOfStep = i;
 
-                travelmmList[i] = numbOfSteps * (1 / _printerConfiguration.XStepsPerMM);
+                travelmmList[i] = numbOfStep * (1 / _printerConfiguration.XStepsPerMM);
 
                 speedPermm = Math.Sqrt(2 * _printerConfiguration.XMaxAcceleration * travelmmList[i]);
 

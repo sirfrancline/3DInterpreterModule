@@ -9,12 +9,13 @@ namespace PrinterConfiguration
     public class Configuration
     {
 
-        public float XStepsPerMM { get; set; } = 200;
+        public double XStepsPerMM { get; set; } = 200.000;
+
         public float XMaxSpeedPerMM { get; set; } = 30;
 
         public float YStepsPerMM { get; set; } = 200;
         public float ZStepsPerMM { get; set; } = 200;
-        public int XMaxAcceleration { get; set; } = 40;
+        public double XMaxAcceleration { get; set; } = 40.000;
         public int XJerk { get; set; } = 20;
         public int YMaxAcceleration { get; set; } = 60;
     }
