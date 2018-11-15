@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EEFB2EDC-0EFD-4FA2-BCB4-6EEBD20358D8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>_3DInterpreter</RootNamespace>
-    <AssemblyName>3DInterpreter</AssemblyName>
+    <ProjectGuid>{BE8707A1-B6A6-4361-A6E1-41FE0F05E44C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Movement</RootNamespace>
+    <AssemblyName>Movement</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,17 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Movement.cs" />
+    <Compile Include="MovementCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Movement\Movement.csproj">
-      <Project>{BE8707A1-B6A6-4361-A6E1-41FE0F05E44C}</Project>
-      <Name>Movement</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PrinterConfiguration\PrinterConfiguration.csproj">
       <Project>{7F934EDA-92B2-4BA8-B321-18799DD034FE}</Project>
       <Name>PrinterConfiguration</Name>
