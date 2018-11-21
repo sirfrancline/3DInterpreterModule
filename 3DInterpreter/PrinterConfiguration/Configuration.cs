@@ -18,5 +18,7 @@ namespace PrinterConfiguration
         public double XMaxAcceleration { get; set; } = 40.000;
         public int XJerk { get; set; } = 20;
         public int YMaxAcceleration { get; set; } = 60;
+
+        public double deceleration { get; set; } = 20;
     }
 }

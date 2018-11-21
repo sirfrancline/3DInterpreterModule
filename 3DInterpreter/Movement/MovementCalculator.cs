@@ -1,58 +1,146 @@
 ﻿using PrinterConfiguration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Movement
 {
     public class MovementCalculator
     {
-
         private Configuration _printerConfiguration;
+
         public MovementCalculator(Configuration printerConfiguration)
         {
             _printerConfiguration = printerConfiguration;
         }
 
-        public Movement CalculateX(int numb)
+        public Movement CalculateX(double startPosition, double stop, double maxSpeedMmPerSec)
         {
             // calculate distance
-            int numbOfSteps = numb;
-            double[] travelmmList = new double[ numbOfSteps];
-            double[] time = new double[numbOfSteps];
+            var distance = stop - startPosition;
 
-            int minStepTime = 2 * 5 / 1000000;
-            double speedPermm = 0;
-            double speedmms = 0;
+            var direction = distance > 0; // true forward
+            // given speed
+            // max printer speed
+            var speed = maxSpeedMmPerSec > _printerConfiguration.XMaxSpeedPerMM
+                ? _printerConfiguration.XMaxSpeedPerMM
+                : maxSpeedMmPerSec;
 
-            // double XstepsPerMM = 200.0000;
-            //  double XMaxAcceleration = 40.000;
+            // get the time for a full speed (acceleration)
+            /*
+             * t=(v-v0)/a --> t => speed / axis max accel
+             */
+            var timeToFullSpeed = speed / _printerConfiguration.XMaxAcceleration;
 
-            for (int i = 1; i < numbOfSteps; i++)
+            /*
+             * s = at^2/2 -->
+             *Speed after a given distance of travel with constant acceleration:/
+             */
+
+            var distanceToFullSpeed = _printerConfiguration.XMaxAcceleration * Math.Sqrt(timeToFullSpeed) / 2;
+
+            /*
+             * now we could calculate time after a given distance
+             * distance = 1/2 * accel * time^2 --> time^2 = (distance * 2) / accel ==>
+             * time = sqrt((2*distance)/accel)
+             *
+             * v^2 = 2*a(distance) --> v = sqrt(2*a(distance))
+             */
+
+
+            var move = new Movement();
+
+            // as we know distance traveled to get full speed, then we can calculate step than we need to go
+
+            var stepsNumber = 0;
+            double traveledDistance = 0;
+            double timeBeforeStep = 0;
+            var accelerating = true;
+            while (accelerating)
             {
-             int    numbOfStep = i;
+                stepsNumber++;
 
-                travelmmList[i] = numbOfStep * (1 / _printerConfiguration.XStepsPerMM);
+                var distanceAfterStep = stepsNumber / _printerConfiguration.XStepsPerMM;
+                var speedAfterDistance = Math.Sqrt(2 * _printerConfiguration.XMaxAcceleration * distanceAfterStep);
+                accelerating = speed >= speedAfterDistance;
 
-                speedPermm = Math.Sqrt(2 * _printerConfiguration.XMaxAcceleration * travelmmList[i]);
+                if (!accelerating) continue; //return from loop
 
-                double pastValue = travelmmList[i - 1];
+                var timeCaculatedFromStart = Math.Sqrt(2 * distanceAfterStep / _printerConfiguration.XMaxAcceleration);
+                var cycleTime = timeCaculatedFromStart - timeBeforeStep;
+                var stepData = new StepData
+                {
+                    DistanceAfterStep = distanceAfterStep,
+                    HeadPositionAfterStep =
+                        (direction) ? distanceAfterStep + startPosition : startPosition - distanceAfterStep,
+                    StepTime = cycleTime,
+                    SpeedAfterMove = speedAfterDistance,
+                    StepNumber = stepsNumber
+                };
 
-                //  double speedmm = Math.Sqrt(speedPermm * speedPermm + 2 * XMaxAcceleration * (travelmmList[i] - pastValue));
-
-                time[i] = Math.Sqrt(2 * travelmmList[i] / _printerConfiguration.XMaxAcceleration);
-                var stepTime = time[i] - time[i - 1];
-
-                var canHandle = time[i] > minStepTime;
-                Console.WriteLine($"number of steps: {numbOfSteps}" + $"  travelmm : {travelmmList[i]} " + $" speedPermm:  { speedPermm } " + $" time: {time[i]} " + $" step time : {stepTime} " + $" canHandle { canHandle}");
+                move.Steps.Add(stepData);
+                //Console.WriteLine($"HeadPositionAfterStep: {stepData.HeadPositionAfterStep} SpeedAfterMove: {stepData.SpeedAfterMove} StepTime:{stepData.StepTime}");
+                // step is finished
+                traveledDistance = distanceAfterStep;
+                timeBeforeStep = timeCaculatedFromStart;
             }
 
-            return null;
+
+            var distanceToMoveWithMaxSpeed = distance - 2 * traveledDistance;
+
+
+            // now we can do deceleration
+            var deceleration = new List<StepData>();
+            var decelerationStep = 0;
+            foreach (var step in move.Steps)
+            {
+                var decStep = new StepData
+                {
+                    DistanceAfterStep = traveledDistance - decelerationStep / _printerConfiguration.XStepsPerMM,
+                    StepTime = step.StepTime,
+                    StepNumber = -step.StepNumber,
+                    SpeedAfterMove = step.SpeedAfterMove,
+                    HeadPositionAfterStep = (stop - decelerationStep / _printerConfiguration.XStepsPerMM),
+                    TimeStamp = step.TimeStamp
+                };
+
+                deceleration.Insert(0, decStep);
+
+                decelerationStep++;
+            }
+
+
+
+
+
+            /*
+             * s = v*t => t = s/v
+             */
+
+            var timeWithFullSpeed = distanceToMoveWithMaxSpeed / speed;
+            var stepsCountWithMaxSpeed = (int)(distanceToMoveWithMaxSpeed * _printerConfiguration.XStepsPerMM);
+            var maxSpeedCycleTime = timeWithFullSpeed / stepsCountWithMaxSpeed;
+
+            for (int i = 1; i <= stepsCountWithMaxSpeed; i++)
+            {
+
+                var stepData = new StepData
+                {
+                    DistanceAfterStep = stepsNumber / _printerConfiguration.XStepsPerMM,
+                    HeadPositionAfterStep =
+                        (direction) ? stepsNumber / _printerConfiguration.XStepsPerMM + startPosition : startPosition - stepsNumber / _printerConfiguration.XStepsPerMM,
+                    StepTime = maxSpeedCycleTime,
+                    SpeedAfterMove = speed,
+                    StepNumber = stepsNumber
+                };
+
+                move.Steps.Add(stepData);
+                stepsNumber++;
+            }
+
+
+            move.Steps.AddRange(deceleration);
+
+            return move;
         }
-    
-}
-
     }
-
+}
