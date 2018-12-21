@@ -55,11 +55,20 @@ namespace Movement
             double traveledDistance = 0;
             double timeBeforeStep = 0;
             var accelerating = true;
+            var acceleratedToMaxSpeed = true;
             while (accelerating)
             {
                 stepsNumber++;
-
                 var distanceAfterStep = stepsNumber / _printerConfiguration.XStepsPerMM;
+                // check if we need to brake
+                var fullDistanece = 2 * distanceAfterStep;
+                if (fullDistanece > distance)
+                {
+                    accelerating = false;
+                    acceleratedToMaxSpeed = false;
+                    continue;
+                }
+
                 var speedAfterDistance = Math.Sqrt(2 * _printerConfiguration.XMaxAcceleration * distanceAfterStep);
                 accelerating = speed >= speedAfterDistance;
 
@@ -77,7 +86,7 @@ namespace Movement
                     StepNumber = stepsNumber
                 };
 
-                move.Steps.Add(stepData);
+                move.HeadSteps.Add(stepData);
                 //Console.WriteLine($"HeadPositionAfterStep: {stepData.HeadPositionAfterStep} SpeedAfterMove: {stepData.SpeedAfterMove} StepTime:{stepData.StepTime}");
                 // step is finished
                 traveledDistance = distanceAfterStep;
@@ -91,7 +100,7 @@ namespace Movement
             // now we can do deceleration
             var deceleration = new List<StepData>();
             var decelerationStep = 0;
-            foreach (var step in move.Steps)
+            foreach (var step in move.HeadSteps)
             {
                 var decStep = new StepData
                 {
@@ -115,7 +124,7 @@ namespace Movement
             /*
              * s = v*t => t = s/v
              */
-
+            var bodyMovementSpeed = acceleratedToMaxSpeed ? speed : deceleration[0].SpeedAfterMove;
             var timeWithFullSpeed = distanceToMoveWithMaxSpeed / speed;
             var stepsCountWithMaxSpeed = (int)(distanceToMoveWithMaxSpeed * _printerConfiguration.XStepsPerMM);
             var maxSpeedCycleTime = timeWithFullSpeed / stepsCountWithMaxSpeed;
@@ -133,12 +142,12 @@ namespace Movement
                     StepNumber = stepsNumber
                 };
 
-                move.Steps.Add(stepData);
+                move.BodySteps.Add(stepData);
                 stepsNumber++;
             }
 
 
-            move.Steps.AddRange(deceleration);
+            move.TailSteps.AddRange(deceleration);
 
             return move;
         }
