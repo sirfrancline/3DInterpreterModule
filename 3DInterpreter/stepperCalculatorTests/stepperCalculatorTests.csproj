@@ -49,20 +49,16 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="AxisMovementCalculatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Movement\Movement.csproj">
-      <Project>{BE8707A1-B6A6-4361-A6E1-41FE0F05E44C}</Project>
-      <Name>Movement</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PrinterConfiguration\PrinterConfiguration.csproj">
-      <Project>{7F934EDA-92B2-4BA8-B321-18799DD034FE}</Project>
-      <Name>PrinterConfiguration</Name>
+    <ProjectReference Include="..\3DInterpreter\3DInterpreter.csproj">
+      <Project>{EEFB2EDC-0EFD-4FA2-BCB4-6EEBD20358D8}</Project>
+      <Name>3DInterpreter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

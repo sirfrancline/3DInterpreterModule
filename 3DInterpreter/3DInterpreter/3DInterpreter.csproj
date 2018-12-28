@@ -43,21 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\AxisConfiguration.cs" />
+    <Compile Include="Configuration\PrinterConfiguration.cs" />
+    <Compile Include="Movement.cs" />
+    <Compile Include="MovementCalculator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StepData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Movement\Movement.csproj">
-      <Project>{BE8707A1-B6A6-4361-A6E1-41FE0F05E44C}</Project>
-      <Name>Movement</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PrinterConfiguration\PrinterConfiguration.csproj">
-      <Project>{7F934EDA-92B2-4BA8-B321-18799DD034FE}</Project>
-      <Name>PrinterConfiguration</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

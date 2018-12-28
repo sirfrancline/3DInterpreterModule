@@ -1,4 +1,6 @@
-﻿using PrinterConfiguration;
+﻿using _3DInterpreter;
+using _3DInterpreter.Configuration;
+
 using System;
 using System.Collections.Generic;
 
@@ -167,5 +169,6 @@ namespace Movement
             return accelerating;
         }
     }
+}
 
  
