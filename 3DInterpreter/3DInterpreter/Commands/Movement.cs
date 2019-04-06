@@ -1,7 +1,10 @@
-﻿using PrinterConfiguration;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Movement
+namespace _3DInterpreter.Commands
 {
     public class Movement
     {
@@ -11,5 +14,8 @@ namespace Movement
         public float StartPoint { get; set; }
         public float EndPoint { get; set; }
         public int StepNumber { get; set; }
+        public double TotalTime { get; set; }
+        public double SpeedFactor { get; set; }
+        public bool Direction { get; set; }
     }
 }

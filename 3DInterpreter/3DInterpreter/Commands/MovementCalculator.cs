@@ -1,8 +1,11 @@
-﻿using PrinterConfiguration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Movement
+namespace _3DInterpreter.Commands
 {
     public class MovementCalculator
     {
@@ -11,20 +14,35 @@ namespace Movement
         private double _traveledDistance;
         private double _timeBeforeStep;
         private bool _acceleratedToMaxSpeed;
-        private bool _direction;
+
         private Movement _move = new Movement();
         private double _speed;
         private double _distance;
+
 
         public MovementCalculator(AxisConfiguration axisConf)
         {
             _axisConf = axisConf;
         }
+
         public Movement CalculateSteps(double startPosition, double stop, double maxSpeedMmPerSec)
         {
+            ResetValues();
+            Console.WriteLine($"calculating for: startPosition:{startPosition}, stop:{stop}, maxSpeedMmPerSec:{maxSpeedMmPerSec}");
+
+
             // calculate distance
             _distance = stop - startPosition;
-            _direction = _distance > 0; // true forward
+            Console.WriteLine(_distance);
+            var tolerance = 0.0000001;
+            if (Math.Abs(_distance) < tolerance)
+            {
+                Console.WriteLine("no move");
+                return _move;
+            }
+
+            _move.Direction = _distance > 0; // true forward
+
             // given speed
             // max printer speed
             _speed = maxSpeedMmPerSec > _axisConf.MaxSpeedPerMM
@@ -53,22 +71,25 @@ namespace Movement
 
 
             // as we know distance traveled to get full speed, then we can calculate step than we need to go
-            ResetValues();
+
 
             var accelerating = true;
             while (accelerating)
             {
-                accelerating = Accelerating(startPosition, _distance, _speed, _direction, _move);
+                accelerating = Accelerating(startPosition, _distance, _speed, _move.Direction, _move);
             }
+            Debug.Assert(0 < _move.HeadSteps.Count);
 
             // now we can do deceleration
             var decelerationSteps = DecelarationStepData(stop);
+
 
             CalculateBodySteps(startPosition, decelerationSteps[0].SpeedAfterMove);
             _move.TailSteps.AddRange(decelerationSteps);
 
             return _move;
         }
+
         private void ResetValues()
         {
             _move = new Movement();
@@ -76,7 +97,11 @@ namespace Movement
             _traveledDistance = 0;
             _timeBeforeStep = 0;
             _acceleratedToMaxSpeed = true;
+
+            _speed = 0;
+            _distance = 0;
         }
+
         private void CalculateBodySteps(double startPosition, double decelerationStepsSpeedAfterMove)
         {
             var distanceToMoveWithMaxSpeed = _distance - 2 * _traveledDistance;
@@ -92,7 +117,7 @@ namespace Movement
                 {
                     DistanceAfterStep = _stepsNumber / _axisConf.StepsPerMM,
                     HeadPositionAfterStep =
-                        (_direction)
+                        (_move.Direction)
                             ? _stepsNumber / _axisConf.StepsPerMM + startPosition
                             : startPosition - _stepsNumber / _axisConf.StepsPerMM,
                     StepTime = maxSpeedCycleTime,
@@ -103,7 +128,10 @@ namespace Movement
                 _move.BodySteps.Add(stepData);
                 _stepsNumber++;
             }
+
+            _move.TotalTime += maxSpeedCycleTime * stepsCountWithMaxSpeed;
         }
+
         private List<StepData> DecelarationStepData(double stop)
         {
             var deceleration = new List<StepData>();
@@ -121,13 +149,19 @@ namespace Movement
                 };
 
                 deceleration.Insert(0, decStep);
-
+                _move.TotalTime += step.StepTime;
                 decelerationStep++;
             }
 
             return deceleration;
         }
-        private bool Accelerating(double startPosition, double distance, double speed, bool direction, Movement move)
+
+        private bool Accelerating(double startPosition,
+            double distance,
+            double speed,
+            bool direction,
+            Movement move
+            )
         {
             bool accelerating;
             _stepsNumber++;
@@ -135,7 +169,7 @@ namespace Movement
             var distanceAfterStep = _stepsNumber / _axisConf.StepsPerMM;
             // check if we need to brake
             var fullDistanece = 2 * distanceAfterStep;
-            if (fullDistanece > distance)
+            if (fullDistanece > Math.Abs(distance))
             {
                 accelerating = false;
                 _acceleratedToMaxSpeed = false;
@@ -158,7 +192,7 @@ namespace Movement
                 SpeedAfterMove = speedAfterDistance,
                 StepNumber = _stepsNumber
             };
-
+            _move.TotalTime += stepData.StepTime;
             move.HeadSteps.Add(stepData);
             //Console.WriteLine($"HeadPositionAfterStep: {stepData.HeadPositionAfterStep} SpeedAfterMove: {stepData.SpeedAfterMove} StepTime:{stepData.StepTime}");
             // step is finished
@@ -167,5 +201,4 @@ namespace Movement
             return accelerating;
         }
     }
-
- 
+}

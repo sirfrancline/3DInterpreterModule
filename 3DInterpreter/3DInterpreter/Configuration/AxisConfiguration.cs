@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _3DInterpreter.Configuration
+namespace _3DInterpreter
 {
   public  class AxisConfiguration
     {

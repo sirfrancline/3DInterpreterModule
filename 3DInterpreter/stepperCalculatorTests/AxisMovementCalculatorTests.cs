@@ -1,6 +1,7 @@
-﻿using _3DInterpreter.Configuration;
+﻿using _3DInterpreter;
+using _3DInterpreter.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Movement;
+
 
 namespace stepperCalculatorTests
 {

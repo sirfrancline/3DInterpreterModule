@@ -43,16 +43,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CommandType.cs" />
+    <Compile Include="Commands\IPrinterCommand.cs" />
+    <Compile Include="Commands\MoveCommand.cs" />
+    <Compile Include="Commands\Movement.cs" />
+    <Compile Include="Commands\MovementCalculator.cs" />
+    <Compile Include="Commands\PrinterAxis.cs" />
+    <Compile Include="Commands\StepData.cs" />
     <Compile Include="Configuration\AxisConfiguration.cs" />
     <Compile Include="Configuration\PrinterConfiguration.cs" />
-    <Compile Include="Movement.cs" />
-    <Compile Include="MovementCalculator.cs" />
+    <Compile Include="fileReader\FileReader.cs" />
+    <Compile Include="GCodeData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StepData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

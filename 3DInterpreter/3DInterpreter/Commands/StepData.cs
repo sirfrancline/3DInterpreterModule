@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _3DInterpreter
+namespace _3DInterpreter.Commands
 {
-   public class StepData
+    public class StepData
     {
         public int TimeStamp { get; set; }
         public double HeadPositionAfterStep { get; set; }
