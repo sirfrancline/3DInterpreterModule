@@ -18,6 +18,7 @@ namespace _3DInterpreter.Commands
         private Movement _move = new Movement();
         private double _speed;
         private double _distance;
+        private bool _onlyOneStep;
 
 
         public MovementCalculator(AxisConfiguration axisConf)
@@ -78,14 +79,20 @@ namespace _3DInterpreter.Commands
             {
                 accelerating = Accelerating(startPosition, _distance, _speed, _move.Direction, _move);
             }
-            Debug.Assert(0 < _move.HeadSteps.Count);
+            // as we could have a edge case where only one step need to be added,
+            // accelarating method need to give a flag to stop processing
+
+
+            Debug.Assert(0 < _move.HeadSteps.Count, $"0 < _move.HeadSteps.Count {_move.HeadSteps.Count}",
+                $"calculating for: startPosition:{startPosition}, stop:{stop}, maxSpeedMmPerSec:{maxSpeedMmPerSec}, steps/mm {_axisConf.StepsPerMM}, min step: {1 / _axisConf.StepsPerMM}, distance to travel: {stop - startPosition}");
 
             // now we can do deceleration
-            var decelerationSteps = DecelarationStepData(stop);
-
-
-            CalculateBodySteps(startPosition, decelerationSteps[0].SpeedAfterMove);
-            _move.TailSteps.AddRange(decelerationSteps);
+            if (!_onlyOneStep) // prevent creating deceleration steps when only one need to be added to the move
+            {
+                var decelerationSteps = DecelarationStepData(stop);
+                CalculateBodySteps(startPosition, decelerationSteps[0].SpeedAfterMove);
+                _move.TailSteps.AddRange(decelerationSteps);
+            }
 
             return _move;
         }
@@ -116,7 +123,7 @@ namespace _3DInterpreter.Commands
                 var stepData = new StepData
                 {
                     DistanceAfterStep = _stepsNumber / _axisConf.StepsPerMM,
-                    HeadPositionAfterStep =
+                    PositionAfterStep =
                         (_move.Direction)
                             ? _stepsNumber / _axisConf.StepsPerMM + startPosition
                             : startPosition - _stepsNumber / _axisConf.StepsPerMM,
@@ -144,7 +151,7 @@ namespace _3DInterpreter.Commands
                     StepTime = step.StepTime,
                     StepNumber = -step.StepNumber,
                     SpeedAfterMove = step.SpeedAfterMove,
-                    HeadPositionAfterStep = (stop - decelerationStep / _axisConf.StepsPerMM),
+                    PositionAfterStep = (stop - decelerationStep / _axisConf.StepsPerMM),
                     TimeStamp = step.TimeStamp
                 };
 
@@ -156,25 +163,15 @@ namespace _3DInterpreter.Commands
             return deceleration;
         }
 
-        private bool Accelerating(double startPosition,
-            double distance,
-            double speed,
-            bool direction,
-            Movement move
-            )
+        private bool Accelerating(double startPosition,double distance, double speed,  bool direction, Movement move )
         {
             bool accelerating;
             _stepsNumber++;
 
             var distanceAfterStep = _stepsNumber / _axisConf.StepsPerMM;
             // check if we need to brake
-            var fullDistanece = 2 * distanceAfterStep;
-            if (fullDistanece > Math.Abs(distance))
-            {
-                accelerating = false;
-                _acceleratedToMaxSpeed = false;
-                return accelerating;
-            }
+        
+            
 
             var speedAfterDistance = Math.Sqrt(2 * _axisConf.MaxAcceleration * distanceAfterStep);
             accelerating = speed >= speedAfterDistance;
@@ -186,12 +183,30 @@ namespace _3DInterpreter.Commands
             var stepData = new StepData
             {
                 DistanceAfterStep = distanceAfterStep,
-                HeadPositionAfterStep =
+                PositionAfterStep =
                     (direction) ? distanceAfterStep + startPosition : startPosition - distanceAfterStep,
                 StepTime = cycleTime,
                 SpeedAfterMove = speedAfterDistance,
                 StepNumber = _stepsNumber
             };
+            // check if we need to brake
+            var fullDistance = 2 * distanceAfterStep;
+            if (fullDistance > Math.Abs(distance))
+            {
+                accelerating = false;
+                _acceleratedToMaxSpeed = false;
+
+                // if we do first step then add it to the steps
+                if (_stepsNumber > 1)
+                {
+                    return accelerating;
+                }
+                else
+                {
+                    _onlyOneStep = true;
+                }
+            }
+
             _move.TotalTime += stepData.StepTime;
             move.HeadSteps.Add(stepData);
             //Console.WriteLine($"HeadPositionAfterStep: {stepData.HeadPositionAfterStep} SpeedAfterMove: {stepData.SpeedAfterMove} StepTime:{stepData.StepTime}");

@@ -8,8 +8,8 @@ namespace _3DInterpreter.Commands
 {
     public class StepData
     {
-        public int TimeStamp { get; set; }
-        public double HeadPositionAfterStep { get; set; }
+        public double TimeStamp { get; set; }
+        public double PositionAfterStep { get; set; }
         public double StepTime { get; set; }
         public double SpeedAfterMove { get; set; }
         public double DistanceAfterStep { get; set; }
