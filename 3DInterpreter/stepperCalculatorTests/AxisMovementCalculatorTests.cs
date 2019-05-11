@@ -2,7 +2,6 @@
 using _3DInterpreter.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-
 namespace stepperCalculatorTests
 {
     [TestClass]
@@ -11,7 +10,6 @@ namespace stepperCalculatorTests
         [TestMethod]
         public void WhenCalculatingStepsNumberWithLowMaxSpeed()
         {
-            // arange
             var stepsMM = 100;
             var distance = 20;
             var sut = new MovementCalculator(new AxisConfiguration
@@ -19,33 +17,24 @@ namespace stepperCalculatorTests
                 MaxAcceleration = 2,
                 StepsPerMM = stepsMM,
                 MaxSpeedPerMM = 1
-            });
-
+            },"X");
             var expectedStepsCount = distance * stepsMM;
-
-            // act
             var steps = sut.CalculateSteps(0, distance, 50);
             var actualStepsContu = steps.TailSteps.Count + steps.BodySteps.Count + steps.HeadSteps.Count;
-
-            // assert
             Assert.AreEqual(expectedStepsCount, actualStepsContu);
         }
-
-        [TestMethod]
+          [TestMethod]
         public void WhenCalculatingStepsNumberWithHighMaxSpeed()
         {
-            // arange
             var stepsMM = 100;
             var distance = 20;
-            var sut = new MovementCalculator(new AxisConfiguration            {
+            var sut = new MovementCalculator(new AxisConfiguration
+            {
                 MaxAcceleration = 2,
                 StepsPerMM = stepsMM,
                 MaxSpeedPerMM = 50
-            });
-
+            },"Y");
             var expectedStepsCount = distance * stepsMM;
-
-            // act
             var steps = sut.CalculateSteps(0, distance, 50);
             var actualStepsContu = steps.TailSteps.Count + steps.BodySteps.Count + steps.HeadSteps.Count;
 
@@ -65,7 +54,7 @@ namespace stepperCalculatorTests
                 MaxAcceleration = 2,
                 StepsPerMM = stepsMM,
                 MaxSpeedPerMM = 50
-            });
+            }, "X");
 
             var expectedStepsCount = distance * stepsMM;
 
@@ -89,7 +78,7 @@ namespace stepperCalculatorTests
                 MaxAcceleration = 2,
                 StepsPerMM = stepsMM,
                 MaxSpeedPerMM = 50
-            });
+            },"Y");
 
             var expectedStepsCount = distance * stepsMM;
 
@@ -115,7 +104,7 @@ namespace stepperCalculatorTests
                 MaxAcceleration = 200,
                 StepsPerMM = stepsMM,
                 MaxSpeedPerMM = givenSpeed
-            });
+            },"X");
 
             var expectedStepsCount = distance * stepsMM;
 

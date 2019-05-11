@@ -8,9 +8,10 @@ namespace _3DInterpreter
 {
   public  class AxisConfiguration
     {
-        public float StepsPerMM { get; set; } = 200;
-        public float MaxSpeedPerMM { get; set; } = 20;
+        public decimal StepsPerMM { get; set; } = 200;
+        public decimal MaxSpeedPerMM { get; set; } = 20;
         public int MaxAcceleration { get; set; } = 40;
         public int Jerk { get; set; } = 20;
+        //Todo  add min and max value
     }
 }

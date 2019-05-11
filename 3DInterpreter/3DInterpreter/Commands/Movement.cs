@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace _3DInterpreter.Commands
 {
@@ -11,11 +7,19 @@ namespace _3DInterpreter.Commands
         public List<StepData> HeadSteps { get; set; } = new List<StepData>();
         public List<StepData> BodySteps { get; set; } = new List<StepData>();
         public List<StepData> TailSteps { get; set; } = new List<StepData>();
-        public float StartPoint { get; set; }
-        public float EndPoint { get; set; }
-        public int StepNumber { get; set; }
-        public double TotalTime { get; set; }
-        public double SpeedFactor { get; set; }
-        public bool Direction { get; set; }
+    
+        public List<StepData> AllSteps()
+        {
+            var steps = new List<StepData>();
+            steps.AddRange(HeadSteps);
+            steps.AddRange(BodySteps);
+            steps.AddRange(TailSteps);
+
+            return steps;
+        }
+
+        public decimal TotalTime { get; set; } = 0;
+        public decimal SpeedFactor { get; set; }
+        public bool Direction { get; set; } = true;
     }
 }

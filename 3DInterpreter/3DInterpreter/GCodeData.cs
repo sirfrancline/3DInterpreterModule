@@ -9,7 +9,7 @@ namespace _3DInterpreter
 {
     public class GCodeData
     {
-        public Dictionary<PrinterAxis, double> Coordinates = new Dictionary<PrinterAxis, double>
+        public Dictionary<PrinterAxis, decimal> Coordinates = new Dictionary<PrinterAxis, decimal>
         {
             {PrinterAxis.X, -90000},
             {PrinterAxis.Y, -90000},
